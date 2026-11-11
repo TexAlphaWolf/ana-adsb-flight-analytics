@@ -12,6 +12,7 @@ import pytest
 from adsbstats import analysis, cli, flights, report
 from adsbstats.generate import DEFAULT_RATES, FAULT_KINDS, generate
 from adsbstats.params import Params
+from adsbstats.verify import compare
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORT = json.loads((ROOT / "docs" / "report.json").read_text(encoding="utf-8"))
@@ -56,7 +57,10 @@ def test_the_report_is_what_the_demo_gives_today() -> None:
     p = Params()
     res = flights.analyze(g.aircraft(), g.airports, p)
     rep = analysis.build_report(res, g.airports, p, "demo day (synthetic, 150 aircraft, seed 1)", None, g.truth())
-    assert json.loads(json.dumps(rep)) == REPORT
+    # same structure and values; floats within the tolerance of `verify`, because the last digits of a sum of
+    # great-circle distances differ between platforms and Python versions (libm), as CI on Windows, macOS and 3.11 showed
+    _n, _worst, bad = compare(json.loads(json.dumps(rep)), REPORT)
+    assert bad is None, bad
 
 
 def test_figures_exist() -> None:
