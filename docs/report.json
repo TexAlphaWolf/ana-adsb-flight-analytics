@@ -1,0 +1,341 @@
+{
+ "kind": "report",
+ "version": "1.0.0",
+ "source": "demo day (synthetic, 150 aircraft, seed 1)",
+ "params": {
+  "max_kt": 1200.0,
+  "jump_km": 2.0,
+  "gap_s": 1800.0,
+  "min_air_points": 10,
+  "min_air_s": 300.0,
+  "min_air_km": 10.0,
+  "airport_km": 8.0,
+  "low_ft": 3000.0,
+  "weight_cap_s": 60.0,
+  "alt_bin_ft": 2000.0,
+  "speed_bin_kt": 50.0
+ },
+ "read": null,
+ "analysis": {
+  "totals": {
+   "aircraft": 156,
+   "points": 115347,
+   "glitches": 11,
+   "legs": 337,
+   "flights": 331,
+   "distance_km": 189614.891932616,
+   "airborne_h": 348.98719444433846,
+   "origin_unknown": 4,
+   "destination_unknown": 4
+  },
+  "hours": [
+   5,
+   3,
+   5,
+   4,
+   5,
+   8,
+   10,
+   14,
+   20,
+   11,
+   15,
+   21,
+   14,
+   22,
+   17,
+   23,
+   19,
+   21,
+   17,
+   28,
+   18,
+   21,
+   10,
+   0
+  ],
+  "peak_hour": 19,
+  "altitude_share": [
+   0.06150947644437595,
+   0.054462083740741844,
+   0.16346183160232708,
+   0.04453033154143013,
+   0.04573398061635619,
+   0.038334805773194036,
+   0.0361200311461167,
+   0.03392192865991619,
+   0.03228131075549975,
+   0.031487002398933185,
+   0.028630191624268785,
+   0.06882489363218691,
+   0.04017223431462929,
+   0.02341570217141575,
+   0.02631697198002681,
+   0.01711800000713762,
+   0.01594801277538242,
+   0.16756722682922032,
+   0.07016398398684107,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "speed_share": [
+   0.0,
+   0.005810099304178004,
+   0.13625148375772883,
+   0.11461287671017971,
+   0.13647728389791314,
+   0.1608065122689783,
+   0.08168622632701791,
+   0.07146999733680612,
+   0.25427958753348356,
+   0.03860593286371444,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "above_fl240": 0.3607021320646533,
+  "distance_km": {
+   "p10": 304.09225382272814,
+   "median": 522.427073354967,
+   "p90": 912.9988277774016,
+   "max": 1076.5629179948187
+  },
+  "duration_min": {
+   "p10": 34.778333334128064,
+   "median": 57.223333330949146,
+   "p90": 84.66500000158946,
+   "max": 313.9233333349228
+  },
+  "mean_gs_kt": 298.19243646984864,
+  "airports": [
+   {
+    "ident": "TA07",
+    "name": "Test Airport 07",
+    "departures": 33,
+    "arrivals": 34,
+    "movements": 67
+   },
+   {
+    "ident": "TA12",
+    "name": "Test Airport 12",
+    "departures": 33,
+    "arrivals": 32,
+    "movements": 65
+   },
+   {
+    "ident": "TA03",
+    "name": "Test Airport 03",
+    "departures": 31,
+    "arrivals": 30,
+    "movements": 61
+   },
+   {
+    "ident": "TA04",
+    "name": "Test Airport 04",
+    "departures": 28,
+    "arrivals": 31,
+    "movements": 59
+   },
+   {
+    "ident": "TA08",
+    "name": "Test Airport 08",
+    "departures": 29,
+    "arrivals": 30,
+    "movements": 59
+   },
+   {
+    "ident": "TA05",
+    "name": "Test Airport 05",
+    "departures": 27,
+    "arrivals": 30,
+    "movements": 57
+   },
+   {
+    "ident": "TA01",
+    "name": "Test Airport 01",
+    "departures": 27,
+    "arrivals": 29,
+    "movements": 56
+   },
+   {
+    "ident": "TA11",
+    "name": "Test Airport 11",
+    "departures": 25,
+    "arrivals": 29,
+    "movements": 54
+   },
+   {
+    "ident": "TA06",
+    "name": "Test Airport 06",
+    "departures": 27,
+    "arrivals": 25,
+    "movements": 52
+   },
+   {
+    "ident": "TA09",
+    "name": "Test Airport 09",
+    "departures": 24,
+    "arrivals": 22,
+    "movements": 46
+   }
+  ],
+  "routes": [
+   {
+    "origin": "TA12",
+    "destination": "TA07",
+    "flights": 8
+   },
+   {
+    "origin": "TA12",
+    "destination": "TA04",
+    "flights": 7
+   },
+   {
+    "origin": "TA07",
+    "destination": "TA03",
+    "flights": 6
+   },
+   {
+    "origin": "TA03",
+    "destination": "TA05",
+    "flights": 5
+   },
+   {
+    "origin": "TA04",
+    "destination": "TA12",
+    "flights": 5
+   },
+   {
+    "origin": "TA05",
+    "destination": "TA11",
+    "flights": 5
+   },
+   {
+    "origin": "TA06",
+    "destination": "TA03",
+    "flights": 5
+   },
+   {
+    "origin": "TA06",
+    "destination": "TA07",
+    "flights": 5
+   },
+   {
+    "origin": "TA07",
+    "destination": "TA01",
+    "flights": 5
+   },
+   {
+    "origin": "TA07",
+    "destination": "TA12",
+    "flights": 5
+   }
+  ],
+  "types": [
+   {
+    "type": "B738",
+    "flights": 103
+   },
+   {
+    "type": "A320",
+    "flights": 81
+   },
+   {
+    "type": "E190",
+    "flights": 75
+   },
+   {
+    "type": "AT76",
+    "flights": 38
+   },
+   {
+    "type": "C172",
+    "flights": 17
+   },
+   {
+    "type": "PC12",
+    "flights": 12
+   },
+   {
+    "type": "SR22",
+    "flights": 5
+   }
+  ]
+ },
+ "accuracy": {
+  "flights": {
+   "true": 331,
+   "found": 331,
+   "matched": 331,
+   "missed": 0,
+   "extra": 0,
+   "extra_from_decoys": 0,
+   "recall": 1.0,
+   "precision": 1.0
+  },
+  "airports": {
+   "origin_correct": 331,
+   "destination_correct": 331,
+   "matched": 331,
+   "origin_unknown_true": 4,
+   "destination_unknown_true": 4
+  },
+  "distance": {
+   "true_km": 189614.94452346937,
+   "found_km": 189614.891932616,
+   "total_error": -2.773560569932109e-07,
+   "median_abs_error": 0.0,
+   "p95_abs_error": 6.746657506853559e-10,
+   "max_abs_error": 6.148753980331612e-05
+  },
+  "times": {
+   "takeoff_error_median_s": 0.0,
+   "takeoff_error_max_s": 0.0,
+   "landing_error_median_s": 0.0,
+   "landing_error_max_s": 0.0
+  },
+  "glitches": {
+   "injected": 11,
+   "removed": 11
+  },
+  "faults": {
+   "glitch": {
+    "injected": 11,
+    "handled": 11
+   },
+   "no_start": {
+    "injected": 4,
+    "handled": 4
+   },
+   "no_end": {
+    "injected": 4,
+    "handled": 4
+   },
+   "coverage_gap": {
+    "injected": 6,
+    "handled": 6
+   },
+   "duplicate": {
+    "injected": 4,
+    "handled": 4
+   },
+   "ground_only": {
+    "injected": 3,
+    "handled": 3
+   },
+   "brief": {
+    "injected": 3,
+    "handled": 3
+   }
+  },
+  "clean_flights": 302
+ }
+}

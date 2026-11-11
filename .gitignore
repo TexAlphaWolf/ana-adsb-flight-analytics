@@ -1,0 +1,24 @@
+# Secrets and local files: never publish
+.env
+*.key
+*.pem
+secrets/
+*.db
+*.sqlite
+
+# Python / tools / IDE
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+results*/
+adsbstat-out/
+node_modules/
+.idea/
+.vscode/

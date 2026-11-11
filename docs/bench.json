@@ -1,0 +1,117 @@
+{
+ "kind": "bench",
+ "environment": {
+  "adsbstats": "1.0.0",
+  "python": "3.14.10",
+  "numpy": "2.5.4",
+  "system": "Linux x86_64",
+  "cpus": 12,
+  "seed": 1,
+  "repeat": 5,
+  "command": "bench --sizes 100,300,1000,2000 --ref-aircraft 100 --repeat 5 --draws 25 --seeds 20 --out /out",
+  "seconds": 111.1
+ },
+ "analysis": [
+  {
+   "aircraft": 100,
+   "points": 80430,
+   "flights": 232,
+   "seconds": 0.0829616829942097
+  },
+  {
+   "aircraft": 300,
+   "points": 223836,
+   "flights": 661,
+   "seconds": 0.22409725000034086
+  },
+  {
+   "aircraft": 1000,
+   "points": 736162,
+   "flights": 2175,
+   "seconds": 1.0881692429975374
+  },
+  {
+   "aircraft": 2000,
+   "points": 1437011,
+   "flights": 4260,
+   "seconds": 2.021356334000302
+  }
+ ],
+ "reference": {
+  "aircraft": 100,
+  "points": 80430,
+  "seconds": 0.29681339399758144,
+  "fast_seconds": 0.10648127200693125
+ },
+ "write": {
+  "files": 104,
+  "points": 80430,
+  "seconds": 0.3711414830031572
+ },
+ "read_dir": {
+  "files": 104,
+  "points": 80430,
+  "seconds": 0.3731224180010031
+ },
+ "read_tar": {
+  "files": 104,
+  "points": 80430,
+  "seconds": 0.46339027200156124
+ },
+ "accuracy": {
+  "seeds": 20,
+  "aircraft": 200,
+  "flights": {
+   "true": 8692,
+   "found": 8692,
+   "matched": 8692,
+   "extra": 0
+  },
+  "origin_correct": 8692,
+  "destination_correct": 8692,
+  "distance_error_median": 0.0,
+  "distance_error_p95": 9.15833017605145e-10,
+  "distance_error_max": 0.00013401339862395288,
+  "glitches": {
+   "injected": 280,
+   "removed": 280
+  },
+  "faults": {
+   "glitch": {
+    "injected": 280,
+    "handled": 280
+   },
+   "no_start": {
+    "injected": 120,
+    "handled": 120
+   },
+   "no_end": {
+    "injected": 120,
+    "handled": 120
+   },
+   "coverage_gap": {
+    "injected": 160,
+    "handled": 160
+   },
+   "duplicate": {
+    "injected": 120,
+    "handled": 120
+   },
+   "ground_only": {
+    "injected": 80,
+    "handled": 80
+   },
+   "brief": {
+    "injected": 80,
+    "handled": 80
+   }
+  }
+ },
+ "verification": {
+  "checks": 26,
+  "numbers": 31259,
+  "ok": true,
+  "max_rel_error": 1.4746108145858565e-15,
+  "tolerance": 1e-09
+ }
+}
