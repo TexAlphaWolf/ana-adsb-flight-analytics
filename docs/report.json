@@ -1,7 +1,8 @@
 {
  "kind": "report",
- "version": "1.0.0",
+ "version": "1.1.0",
  "source": "demo day (synthetic, 150 aircraft, seed 1)",
+ "elapsed_s": null,
  "params": {
   "max_kt": 1200.0,
   "jump_km": 2.0,
@@ -26,7 +27,10 @@
    "distance_km": 189614.891932616,
    "airborne_h": 348.98719444433846,
    "origin_unknown": 4,
-   "destination_unknown": 4
+   "destination_unknown": 4,
+   "airborne_at_start": 0,
+   "airborne_at_end": 0,
+   "round_trips": 0
   },
   "hours": [
    5,

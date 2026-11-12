@@ -2,9 +2,10 @@
 
 Source: [`report.json`](report.json) (the demo day: 150 aircraft generated with seed 1, plus 6 decoys that never fly) and
 [`bench.json`](bench.json) (one run in Docker on Linux x86_64 with 12 CPUs, Python 3.14.10; medians of 5 runs, 2 for the literal
-implementation; 20 generated days of 200 aircraft for the accuracy). **The traffic is synthetic**: it comes from a simulator built
-to be plausible, and the faults are the ones that simulator injects. Read the structure of the results, not the airports (they
-are invented: `TA01` to `TA12`) and not the numbers of flights per hour.
+implementation; 20 generated days of 200 aircraft for the accuracy) and, for section 6, [`real.json`](real.json) (a real part of
+a day). **Sections 1 to 5 are synthetic**: the traffic comes from a simulator built to be plausible, and the faults are the ones
+that simulator injects. Read the structure of those results, not the airports (they are invented: `TA01` to `TA12`) and not the
+numbers of flights per hour.
 
 ## 1. The demo day
 
@@ -80,12 +81,60 @@ structure of the code; it was not needed to analyse a million reports a second.
 | Read them from a tar archive | 104 | 463.4 ms | 173,569 |
 
 Reading and analysing the same 100 aircraft takes 373.1 ms and 83.0 ms: reading is 4.5 times slower than the analysis. The tar stream is a quarter slower than the directory (463.4 against 373.1 ms). At these speeds a day
-of real traces is a job of hours, and the place to spend effort would be reading (a faster JSON parser, several processes), not
-the analysis.
+of real traces looked like a job of hours; section 6 measured it: 9 minutes for the first part of a day. Reading is still where
+the effort would go (a faster JSON parser, several processes), not the analysis.
+
+## 6. A real part of a day
+
+`v2026.11.10-planes-readsb-prod-0.tar.aa`: the first part (2.0 GB) of the adsb.lol archive for 10 November 2026, run through
+`tools/run_real.ps1` in Docker on a Windows PC with OurAirports' `airports.csv` and no bounding box ([`real.json`](real.json),
+[`real.md`](real.md), [`real.png`](real.png)). The archive part ends in the middle of a file; the reader flagged it as truncated and
+kept everything before the cut. 0 points were unusable and 0 files unreadable. There is no ground truth, so nothing below is an
+accuracy: it is what the definitions of [`method.md`](method.md) give on real traffic.
+
+| What | Value |
+|---|---|
+| Aircraft with positions | 53,099 |
+| Position reports | 72,983,747 |
+| Flights | 135,278 |
+| Distance flown | 78,442,703 km |
+| Time in the air | 134,619.7 h |
+| Glitches removed | 624 (8.5 per million reports) |
+| Read and analysed in | 547 s (133,545 reports a second) |
+
+**Speed.** One pass, one aircraft at a time, took 547 s; the benchmark's read and analysis of synthetic files add up to 176,349
+reports a second, so the real part was 24% slower, with 1,374 reports per aircraft against about 800. The memory seen in one
+`docker stats` sample was 236 MiB.
+
+**The shape of a flight.** The median is 46 minutes and 320 km, the 10th percentile 13 minutes and 55 km, the 90th 125 minutes and
+1,495 km. The longest is 1,440 minutes: a trace that is airborne for the whole day. The longest by distance is a different flight,
+7,192 km. 49.6% of the airborne time is above 24,000 ft; the altitude histogram has two humps, one under 8,000 ft (take-off,
+landing, local flying) and one at 34,000 to 38,000 ft (cruise), 12.2% of the time in the 36,000 to 38,000 ft bin alone.
+
+**The midnight spike is the cut.** Take-offs by hour are 10,469 at 00:00 UTC and 4,664 at 01:00. The count of flights that are
+"already in the air when the day began" (origin unknown, taking off in the first 10 minutes) is 5,057; without them hour 00 has
+5,412, next to 5,321 at 23:00. The mirror image is 5,147 flights still in the air in the last 10 minutes. A flight that crosses
+midnight is two stretches in two daily files, which is what produces both.
+
+**Unknown origins and destinations.** 53,064 flights (39.2%) have no origin and 54,137 (40.0%) no destination, against 4 of 331 in
+the demo. The cut accounts for about 5,000 of each. The other 48,000 or so start or end where the reader saw no airport within
+8 km at or below 3,000 ft: coverage that is lost on the way down, small fields missing from `airports.csv`, or a trace that begins
+in cruise. These causes are not separated by the analysis, and the 8 km and 3,000 ft are the defaults, not tuned on this day.
+
+**Round trips.** 16,842 flights (12.4%) start and end at the same airport. The ten busiest "routes" are all of this kind, led by
+KDAB (267), KFFZ (230) and KSFB (160); the airports are of the kind known for flight schools and local flying (not checked against
+the data). A route table that does not set round trips apart would say nothing about connections, which is why they are counted.
+
+**What the airports say.** The busiest are KORD (1,878 movements), KATL (1,595), KDFW (1,479), KLAX (1,162) and KLAS (1,032); 8
+of the 10 busiest are in the United States, the others RJTT and EGLL. So the first part of the archive is not a sample of the
+world, and its totals are not the world's traffic that day.
+
+**Types.** The Cessna 172 has the most flights (10,423), then the Boeing 737-800 (9,293); 8,141 flights (6.0%) have no type in the
+trace. Not every document carries one (`t` is optional).
 
 ## What this does not say
 
-Nothing here is about real traffic. The synthetic data shows that the reader, the definition of a flight and the score
-agree, that the code is fast enough for a million reports a second and that the two implementations agree; the results of a real
-day (how many flights, which airports, how many glitches of which kind) are the next thing to measure. See
-[`limitations.md`](limitations.md).
+Sections 1 to 5 are about synthetic traffic: they show that the reader, the definition of a flight and the score agree, that the
+code is fast enough for a million reports a second and that the two implementations agree. Section 6 is real but has no ground
+truth, covers the first of two parts of one day, and is not a sample of the world; nothing says how many of its flights are
+right. See [`limitations.md`](limitations.md).

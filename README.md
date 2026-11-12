@@ -21,7 +21,7 @@ from the numbers.
 
 The demo day ([`docs/report.json`](docs/report.json)) is a generated day of 150 aircraft (plus 6 that never fly). **It is
 synthetic**: the faults are the ones the generator injects, so a detection score is a ceiling and not an estimate of what you
-would find in real traces, and **no real day of data has been analysed yet** (see [Limits](#limits)). Speed figures are from one
+would find in real traces; a real day is analysed separately in [A real day](#a-real-day). Speed figures are from one
 run in Docker on Linux x86_64 with 12 CPUs and Python 3.14.10 ([`docs/bench.json`](docs/bench.json); medians of 5 runs, 2 for the
 literal implementation).
 
@@ -46,6 +46,34 @@ literal implementation).
 [`docs/analysis.md`](docs/analysis.md) goes through the results; [`docs/method.md`](docs/method.md) defines the file format and
 what a flight is, exactly; [`docs/architecture.md`](docs/architecture.md) shows how the pieces fit;
 [`docs/report.md`](docs/report.md) and [`docs/bench.md`](docs/bench.md) are the generated reports.
+
+## A real day
+
+One real day, not a generated one: `v2026.11.10-planes-readsb-prod-0.tar.aa`, the first part (2.0 GB) of adsb.lol's archive for
+10 November 2026, with OurAirports' `airports.csv`, run with `tools/run_real.ps1` in Docker on a Windows PC
+([`docs/real.json`](docs/real.json), [`docs/real.md`](docs/real.md)). The archive part ends in the middle of a file, so the reader
+flags it as truncated and keeps everything before the cut. There is no ground truth here: these are what the definitions give on
+real traffic, not a measure of correctness.
+
+![The real day](docs/real.png)
+
+1. **53,099 aircraft and 72,983,747 position reports became 135,278 flights**: 78,442,703 km flown in 134,619.7 hours. The median
+   flight is 46 minutes and 320 km; the 90th percentile is 125 minutes and 1,495 km. 49.6% of the airborne time is above 24,000 ft.
+2. **It took 547 s, 133,545 reports a second**, reading and analysing in one pass, about 24% below the 176,349 a second of the
+   synthetic benchmark. Memory stays small because one aircraft is analysed at a time (about 236 MiB in a `docker stats` sample).
+3. **The busiest hour is 00:00 UTC (10,469 take-offs) and it is an artefact of the cut at midnight.** 5,057 flights are
+   already in the air when the day begins, so the first position is counted as the take-off; without them hour 00 has 5,412
+   take-offs, in line with 5,321 at 23:00. The mirror image at the end of the day is 5,147 flights still in the air.
+4. **39.2% of the flights have no origin and 40.0% no destination** (53,064 and 54,137 of 135,278), against 1.2% in the demo.
+   The midnight cut explains about 5,000 of each. The rest start or end where no airport within 8 km below 3,000 ft was seen,
+   for instance coverage lost on the way down, or an airfield that is not in `airports.csv`; the two are not separated here.
+5. **16,842 flights (12.4%) start and end at the same airport**, and the busiest "routes" are of that kind (KDAB to KDAB 267,
+   KFFZ to KFFZ 230, KSFB to KSFB 160): local flying and training. The busiest airport is KORD with 1,878 movements.
+6. **Glitches are rare: 624 removed in 72,983,747 reports** (8.5 per million). The 10 most flown types start with the
+   Cessna 172 (10,423 flights), then the Boeing 737-800 (9,293); 8,141 flights (6.0%) have no type in the trace.
+
+The part is not a sample of the world: 8 of the 10 busiest airports are in the United States. A whole day is this part and the
+next one (`.tar.ab`), which was not read.
 
 ## Quick start
 
@@ -156,11 +184,11 @@ produces the measurements in this README.
 
 ## Limits
 
-The traces are synthetic and the format was implemented from its documentation: **no day of real adsb.lol data has been
-analysed with this version**, so statistics of real traffic are not part of the results. A flight is an airborne stretch of a
+The demo and the benchmark are synthetic. One real part of a day (the first of two of 10 November 2026) has been analysed, once,
+without a ground truth, so the statistics of real traffic are what the definitions give, not a checked count. A flight is an airborne stretch of a
 trace, not a scheduled flight: pattern work and local flying count when they are long enough, and a flight that crosses midnight
-UTC is two stretches in two daily files. Airports are named by distance only. Reading is single-threaded Python and a full day
-takes a long time; `--limit` and `--bbox` (which filters points, after parsing) help to try it. See
+UTC is two stretches in two daily files. Airports are named by distance only. Reading is single-threaded Python: a 2 GB part
+took 9 minutes; `--limit` and `--bbox` (which filters points, after parsing) help to try it. See
 [`docs/limitations.md`](docs/limitations.md).
 
 The trace data of adsb.lol is published under the Open Database License (ODbL); this repository contains none of it.

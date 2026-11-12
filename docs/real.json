@@ -1,0 +1,299 @@
+{
+ "kind": "report",
+ "version": "1.1.0",
+ "source": "v2026.11.10-planes-readsb-prod-0.tar.aa",
+ "elapsed_s": 546.5118487069994,
+ "params": {
+  "max_kt": 1200.0,
+  "jump_km": 2.0,
+  "gap_s": 1800.0,
+  "min_air_points": 10,
+  "min_air_s": 300.0,
+  "min_air_km": 10.0,
+  "airport_km": 8.0,
+  "low_ft": 3000.0,
+  "weight_cap_s": 60.0,
+  "alt_bin_ft": 2000.0,
+  "speed_bin_kt": 50.0
+ },
+ "read": {
+  "files": 53099,
+  "aircraft": 53099,
+  "points": 72983747,
+  "bad_points": 0,
+  "bad_files": 0,
+  "kept_points": 72983747,
+  "truncated": true,
+  "first_error": "/in/v2026.11.10-planes-readsb-prod-0.tar.aa: the archive ends early (unexpected end of data)"
+ },
+ "analysis": {
+  "totals": {
+   "aircraft": 53099,
+   "points": 72983747,
+   "glitches": 624,
+   "legs": 162512,
+   "flights": 135278,
+   "distance_km": 78442702.66265123,
+   "airborne_h": 134619.66516666816,
+   "origin_unknown": 53064,
+   "destination_unknown": 54137,
+   "airborne_at_start": 5057,
+   "airborne_at_end": 5147,
+   "round_trips": 16842
+  },
+  "hours": [
+   10469,
+   4664,
+   4095,
+   3826,
+   3457,
+   3523,
+   3416,
+   3432,
+   3391,
+   3544,
+   3698,
+   4337,
+   5409,
+   6657,
+   7307,
+   7506,
+   7342,
+   7584,
+   7354,
+   7543,
+   7429,
+   7426,
+   6548,
+   5321
+  ],
+  "peak_hour": 0,
+  "altitude_share": [
+   0.09992331033368285,
+   0.10854652184885205,
+   0.06993067888596935,
+   0.04504760692182894,
+   0.032676163838058506,
+   0.027883532992015268,
+   0.020305081651603767,
+   0.020115398540718775,
+   0.019556311522388157,
+   0.01909832589262284,
+   0.020272515796622405,
+   0.02091197412292233,
+   0.023690544959065692,
+   0.02163398329393668,
+   0.022962088684178015,
+   0.03308341369206714,
+   0.053295123527141074,
+   0.10028839501635778,
+   0.12188737007363791,
+   0.07341577095694897,
+   0.03150887083259915,
+   0.008444011167321425,
+   0.00465131125211249,
+   0.0007670500441530647,
+   0.00010464415319537424
+  ],
+  "speed_share": [
+   0.006644458602955611,
+   0.11250596700602246,
+   0.11500862378641158,
+   0.05858234302378343,
+   0.04619304723099349,
+   0.061212738127059706,
+   0.05102205145006587,
+   0.11283500999125415,
+   0.1990026952339076,
+   0.16206699531387436,
+   0.0657316737107749,
+   0.008580132299683569,
+   0.000547134929275639,
+   1.6055884136174867e-05,
+   1.0546045503753313e-05,
+   6.985431815089993e-06,
+   3.3541932482606914e-05
+  ],
+  "above_fl240": 0.4957325776527148,
+  "distance_km": {
+   "p10": 55.13515769253326,
+   "median": 319.73488633322825,
+   "p90": 1494.7770369187476,
+   "max": 7192.327503656625
+  },
+  "duration_min": {
+   "p10": 12.915949996709823,
+   "median": 45.978833333651224,
+   "p90": 125.03625000119209,
+   "max": 1439.9046666661898
+  },
+  "mean_gs_kt": 278.5505670135929,
+  "airports": [
+   {
+    "ident": "KORD",
+    "name": "Chicago O'Hare International Airport",
+    "departures": 949,
+    "arrivals": 929,
+    "movements": 1878
+   },
+   {
+    "ident": "KATL",
+    "name": "Hartsfield Jackson Atlanta International Airport",
+    "departures": 804,
+    "arrivals": 791,
+    "movements": 1595
+   },
+   {
+    "ident": "KDFW",
+    "name": "Dallas Fort Worth International Airport",
+    "departures": 736,
+    "arrivals": 743,
+    "movements": 1479
+   },
+   {
+    "ident": "KLAX",
+    "name": "Los Angeles International Airport",
+    "departures": 581,
+    "arrivals": 581,
+    "movements": 1162
+   },
+   {
+    "ident": "KLAS",
+    "name": "Harry Reid International Airport",
+    "departures": 498,
+    "arrivals": 534,
+    "movements": 1032
+   },
+   {
+    "ident": "KCLT",
+    "name": "Charlotte Douglas International Airport",
+    "departures": 497,
+    "arrivals": 510,
+    "movements": 1007
+   },
+   {
+    "ident": "RJTT",
+    "name": "Tokyo Haneda International Airport",
+    "departures": 483,
+    "arrivals": 487,
+    "movements": 970
+   },
+   {
+    "ident": "KSFO",
+    "name": "San Francisco International Airport",
+    "departures": 470,
+    "arrivals": 466,
+    "movements": 936
+   },
+   {
+    "ident": "KPHX",
+    "name": "Phoenix Sky Harbor International Airport",
+    "departures": 458,
+    "arrivals": 469,
+    "movements": 927
+   },
+   {
+    "ident": "EGLL",
+    "name": "London Heathrow Airport",
+    "departures": 448,
+    "arrivals": 454,
+    "movements": 902
+   }
+  ],
+  "routes": [
+   {
+    "origin": "KDAB",
+    "destination": "KDAB",
+    "flights": 267
+   },
+   {
+    "origin": "KFFZ",
+    "destination": "KFFZ",
+    "flights": 230
+   },
+   {
+    "origin": "KSFB",
+    "destination": "KSFB",
+    "flights": 160
+   },
+   {
+    "origin": "KMYF",
+    "destination": "KMYF",
+    "flights": 148
+   },
+   {
+    "origin": "KHWO",
+    "destination": "KHWO",
+    "flights": 137
+   },
+   {
+    "origin": "KVRB",
+    "destination": "KVRB",
+    "flights": 135
+   },
+   {
+    "origin": "KGFK",
+    "destination": "KGFK",
+    "flights": 127
+   },
+   {
+    "origin": "KIWA",
+    "destination": "KIWA",
+    "flights": 117
+   },
+   {
+    "origin": "KLGB",
+    "destination": "KLGB",
+    "flights": 113
+   },
+   {
+    "origin": "KVNY",
+    "destination": "KVNY",
+    "flights": 111
+   }
+  ],
+  "types": [
+   {
+    "type": "C172",
+    "flights": 10423
+   },
+   {
+    "type": "B738",
+    "flights": 9293
+   },
+   {
+    "type": "unknown",
+    "flights": 8141
+   },
+   {
+    "type": "A320",
+    "flights": 7726
+   },
+   {
+    "type": "A21N",
+    "flights": 5751
+   },
+   {
+    "type": "A20N",
+    "flights": 5580
+   },
+   {
+    "type": "P28A",
+    "flights": 5545
+   },
+   {
+    "type": "B38M",
+    "flights": 5535
+   },
+   {
+    "type": "A321",
+    "flights": 3487
+   },
+   {
+    "type": "E75L",
+    "flights": 2621
+   }
+  ]
+ },
+ "accuracy": null
+}

@@ -93,3 +93,40 @@ def test_formatting_helpers() -> None:
     )
     assert report.pct(None) == "n/a" and report.pct(0.1234, 2) == "12.34%" and report.num(None) == "n/a"
     assert report.flight_levels([0.5, 0.5], 2000.0) == [("0", 0.5), ("2,000", 0.5)]
+
+
+def flight(takeoff: float, landing: float, origin: str | None, destination: str | None) -> dict[str, Any]:
+    return {"takeoff": takeoff, "landing": landing, "origin": origin, "destination": destination}
+
+
+def test_edges_of_the_day_and_round_trips() -> None:
+    day = 1_800_000_000.0 - 1_800_000_000.0 % 86400
+    fl = [
+        flight(day + 5, day + 3000, None, "A"),  # in the air when the day began
+        flight(day + 700, day + 3000, None, "A"),  # origin unknown, but it took off after the first 10 minutes
+        flight(day + 5, day + 3000, "A", "A"),  # a round trip that took off at once, with a known origin
+        flight(day + 80000, day + 86100, "B", None),  # in the air when the day ended
+        flight(day + 80000, day + 85000, "B", None),  # destination unknown, but it landed before the last 10 minutes
+        flight(day + 9000, day + 12000, "C", "C"),
+    ]
+    assert analysis.edge_counts(fl) == (1, 1)
+    assert analysis.edge_counts([]) == (0, 0)
+    p = Params()
+    res = {
+        "flights": [
+            dict(
+                f, icao="a", type=None, distance_km=1.0, duration_s=1.0, mean_gs_kt=None, max_gs_kt=None, max_alt_ft=1.0
+            )
+            for f in fl
+        ],
+        "aircraft": 1,
+        "points": 1,
+        "glitches": 0,
+        "legs": 1,
+        "alt_s": [1.0] * 25,
+        "speed_s": [1.0] * 17,
+    }
+    t = analysis.build_report(res, [], p, "edges")["analysis"]["totals"]
+    assert (t["airborne_at_start"], t["airborne_at_end"], t["round_trips"]) == (1, 1, 2)
+    md = report.render_report(analysis.build_report(res, [], p, "edges"))
+    assert "| Round trips (same airport at both ends) | 2 |" in md

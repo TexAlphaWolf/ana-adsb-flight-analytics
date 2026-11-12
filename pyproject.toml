@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "adsbstats"
-version = "1.0.0"
+version = "1.1.0"
 description = "Flight statistics from ADS-B traces (readsb format): flights, airports, routes, altitudes and busiest hours, checked against a literal point-by-point implementation and against a synthetic ground truth."
 readme = "README.md"
 license = { text = "MIT" }

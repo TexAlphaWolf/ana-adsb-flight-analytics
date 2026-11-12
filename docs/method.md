@@ -71,7 +71,12 @@ The share of airborne time above 24,000 ft is the weight in the bins from 24,000
 ## The report
 
 Hours are the UTC hour of the take-off. The busiest airports count departures and arrivals of flights whose airport is named;
-routes need both ends named. Types are the `t` codes of the files (`unknown` when absent). Distance and duration are given as
+routes need both ends named. Types are the `t` codes of the files (`unknown` when absent). Two kinds of flight are counted
+apart, because they are artefacts of how the data is cut. The *day* is the UTC day of the first take-off. A flight that was
+**already in the air when the day began** has no origin and takes off in the first 10 minutes of the day (its first report is the
+first of the file, not a take-off); one **still in the air when the day ended** has no destination and lands in the last 10
+minutes. A **round trip** is a flight whose origin and destination are the same airport (circuits, training, sightseeing,
+or a flight that returns). Distance and duration are given as
 the 10th percentile, median, 90th percentile and longest. The Markdown is a pure function of `report.json`.
 
 ## The synthetic day

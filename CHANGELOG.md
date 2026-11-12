@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0
+
+A real day, and what it asked for.
+
+- First real data: the first part of adsb.lol's archive for 10 November 2026 (53,099 aircraft, 72,983,747 reports, 135,278
+  flights, 547 s) in `docs/real.json`, `docs/real.md` and `docs/real.png`, with the analysis in `docs/analysis.md` section 6.
+- Three new totals: flights already in the air when the day began, flights still in the air when it ended (the first and last
+  10 minutes of the UTC day) and round trips (the same airport at both ends). They explain the spike at 00:00 UTC and the
+  busiest "routes" of a real day.
+- The report records the time taken (`elapsed_s`) and prints reports a second; `analyze` writes a progress line to stderr every
+  5,000 aircraft, so a run of minutes is not silent.
+- The limits and the speed statements are rewritten from what the real day measured.
+
 ## 1.0.0
 
 First release.

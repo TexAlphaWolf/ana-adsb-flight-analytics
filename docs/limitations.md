@@ -24,7 +24,7 @@
 - **Reading is Python speed.** About 215,000 reports a second from a directory (the benchmark above), single-threaded, with the
   gzip and JSON decoding of each file. A day of adsb.lol traces has hundreds of millions of reports; extrapolating the benchmark
   gives hours, not minutes (an extrapolation, not a measurement). Use `--limit` and `--bbox` to try it.
-- **The timings are for synthetic files** with about 800 reports per aircraft. Real traces vary from a few reports to tens of
-  thousands per aircraft, and the cost of the per-aircraft work depends on that.
+- **The benchmark timings are for synthetic files** with about 800 reports per aircraft; the real part averages 1,374 per aircraft
+  and the throughput was 24% lower than the benchmark's combined figure.
 - **The two implementations share their reading and their parameters.** They are compared on the same parsed points, so a bug
   in the reader is not caught by `verify`; the reader has its own tests.

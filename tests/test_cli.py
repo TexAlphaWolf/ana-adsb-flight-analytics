@@ -156,3 +156,25 @@ def test_version(capsys: pytest.CaptureFixture[str]) -> None:
         main(["--version"])
     assert f"adsbstat {__version__}" in capsys.readouterr().out
     assert generate(5, 1).stats  # the generator also works for tiny fleets
+
+
+def test_progress_line_and_elapsed_time(
+    made: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from adsbstats import cli
+    from adsbstats.trace import ReadStats, read_path
+
+    stats = ReadStats()
+    assert len(list(cli.watch(read_path(made / "traces", stats, 5), stats, 0.0, every=2))) == 5
+    err = capsys.readouterr().err
+    assert err.count("aircraft,") == 2 and "2 aircraft" in err and "4 aircraft" in err
+    code, _out, err = run(capsys, "analyze", str(made), "--out", str(tmp_path))
+    assert code == 0 and err == ""  # a small day prints no progress
+    monkeypatch.setattr(cli, "PROGRESS_EVERY", 10)
+    code, _out, err = run(capsys, "analyze", str(made), "--out", str(tmp_path / "again"))
+    assert code == 0 and "10 aircraft," in err and "20 aircraft," in err  # `analyze` itself reports progress
+    monkeypatch.undo()
+    rep = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert rep["elapsed_s"] > 0 and "position reports a second" in (tmp_path / "report.md").read_text(encoding="utf-8")
+    code, _out, _err = run(capsys, "analyze", "--out", str(tmp_path / "demo"))
+    assert json.loads((tmp_path / "demo" / "report.json").read_text(encoding="utf-8"))["elapsed_s"] is None

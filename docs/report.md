@@ -1,6 +1,6 @@
 # Flight analysis
 
-Source: demo day (synthetic, 150 aircraft, seed 1). adsbstat 1.0.0.
+Source: demo day (synthetic, 150 aircraft, seed 1). adsbstat 1.1.0.
 
 ## Totals
 
@@ -15,6 +15,9 @@ Source: demo day (synthetic, 150 aircraft, seed 1). adsbstat 1.0.0.
 | Time in the air | 349.0 h |
 | Origin unknown | 4 |
 | Destination unknown | 4 |
+| Already in the air when the day began (origin unknown, first 10 minutes) | 0 |
+| Still in the air when the day ended (destination unknown, last 10 minutes) | 0 |
+| Round trips (same airport at both ends) | 0 |
 
 ## Flights
 

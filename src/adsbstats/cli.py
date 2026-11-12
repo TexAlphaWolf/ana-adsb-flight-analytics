@@ -5,7 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from collections.abc import Iterable
+import time
+from collections.abc import Iterable, Iterator
 from dataclasses import fields
 from pathlib import Path
 from typing import Any
@@ -73,6 +74,22 @@ def summary_lines(rep: dict[str, Any]) -> list[str]:
     return lines
 
 
+PROGRESS_EVERY = 5000
+
+
+def watch(aircraft: Iterable[Aircraft], stats: ReadStats, t0: float, every: int = 0) -> Iterator[Aircraft]:
+    """The same aircraft, with a line on stderr every `every` aircraft (a real day takes minutes)."""
+    every = every or PROGRESS_EVERY
+    for ac in aircraft:
+        yield ac
+        if stats.aircraft % every == 0:
+            print(
+                f"  {stats.aircraft:,} aircraft, {stats.points:,} reports, {time.perf_counter() - t0:.0f} s",
+                file=sys.stderr,
+                flush=True,
+            )
+
+
 def cmd_generate(a: argparse.Namespace) -> int:
     out = Path(a.directory)
     if out.exists() and any(out.iterdir()):
@@ -86,6 +103,7 @@ def cmd_generate(a: argparse.Namespace) -> int:
 def cmd_analyze(a: argparse.Namespace) -> int:
     p = params_from(a)
     truth = None
+    t0 = time.perf_counter()
     if a.path:
         root = Path(a.path)
         ap_path = Path(a.airports) if a.airports else (root / "airports.csv" if root.is_dir() else None)
@@ -98,8 +116,8 @@ def cmd_analyze(a: argparse.Namespace) -> int:
         elif a.truth:
             raise ValueError(f"cannot read the truth file {a.truth}")
         stats = ReadStats()
-        aircraft: Iterable[Aircraft] = read_path(
-            root, stats, a.limit, parse_bbox(a.bbox)
+        aircraft: Iterable[Aircraft] = watch(
+            read_path(root, stats, a.limit, parse_bbox(a.bbox)), stats, t0
         )  # one aircraft at a time: a day does not fit in memory
         source = str(a.path) if not a.name else a.name
     else:
@@ -111,7 +129,7 @@ def cmd_analyze(a: argparse.Namespace) -> int:
     result = flights.analyze(aircraft, airports, p)
     if a.path and not result["aircraft"]:
         raise TraceError(f"no aircraft with positions found in {a.path}")
-    rep = analysis.build_report(result, airports, p, source, stats, truth)
+    rep = analysis.build_report(result, airports, p, source, stats, truth, time.perf_counter() - t0 if stats else None)
     for line in summary_lines(rep):
         print(line)
     if a.out:

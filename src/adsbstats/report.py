@@ -66,6 +66,9 @@ def render_report(rep: dict[str, Any]) -> str:
         f"| Time in the air | {num(t['airborne_h'], 1)} h |",
         f"| Origin unknown | {t['origin_unknown']:,} |",
         f"| Destination unknown | {t['destination_unknown']:,} |",
+        f"| Already in the air when the day began (origin unknown, first 10 minutes) | {t['airborne_at_start']:,} |",
+        f"| Still in the air when the day ended (destination unknown, last 10 minutes) | {t['airborne_at_end']:,} |",
+        f"| Round trips (same airport at both ends) | {t['round_trips']:,} |",
         "",
     ]
     rd = rep.get("read")
@@ -76,6 +79,14 @@ def render_report(rep: dict[str, Any]) -> str:
             f"{rd['files']:,} files, {rd['aircraft']:,} aircraft with positions, {rd['points']:,} points of which "
             f"{rd['bad_points']:,} were unusable and {rd['kept_points']:,} were kept; {rd['bad_files']:,} unreadable files"
             + ("; the archive ended early." if rd["truncated"] else "."),
+            *(
+                [
+                    "",
+                    f"Read and analysed in {rep['elapsed_s']:,.0f} s: {rd['points'] / rep['elapsed_s']:,.0f} position reports a second.",
+                ]
+                if rep.get("elapsed_s")
+                else []
+            ),
             "",
         ]
     if t["flights"]:

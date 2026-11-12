@@ -15,6 +15,10 @@ from .params import ALT_BINS, SPEED_BINS, Params
 from .trace import ReadStats
 
 TOP = 10
+EDGE_S = (
+    600.0  # a flight with no known end within this many seconds of the start or end of the day was in the air across it
+)
+DAY_S = 86400.0
 FL240 = 12  # altitude bins (2,000 ft) below 24,000 ft
 
 
@@ -39,6 +43,21 @@ def hour_of(t: float) -> int:
     return datetime.fromtimestamp(t, UTC).hour
 
 
+def edge_counts(fl: list[dict[str, Any]]) -> tuple[int, int]:
+    """(flights that were already in the air when the day began, flights still in the air when it ended).
+
+    The day is the UTC day of the first take-off. A flight counts at the start when its origin is unknown and it takes off
+    within EDGE_S of midnight, at the end when its destination is unknown and it lands within EDGE_S of the next midnight.
+    """
+    if not fl:
+        return 0, 0
+    start = DAY_S * (min(f["takeoff"] for f in fl) // DAY_S)
+    return (
+        sum(1 for f in fl if f["origin"] is None and f["takeoff"] < start + EDGE_S),
+        sum(1 for f in fl if f["destination"] is None and f["landing"] > start + DAY_S - EDGE_S),
+    )
+
+
 def build_report(
     result: dict[str, Any],
     airports: list[Airport],
@@ -46,8 +65,10 @@ def build_report(
     source: str,
     stats: ReadStats | None = None,
     truth: dict[str, Any] | None = None,
+    elapsed_s: float | None = None,
 ) -> dict[str, Any]:
     fl = result["flights"]
+    at_start, at_end = edge_counts(fl)
     names = {a.ident: a for a in airports}
     hours = [0] * 24
     for f in fl:
@@ -82,6 +103,7 @@ def build_report(
         "kind": "report",
         "version": __version__,
         "source": source,
+        "elapsed_s": elapsed_s,
         "params": {k: getattr(p, k) for k in p.__dataclass_fields__},
         "read": None
         if stats is None
@@ -106,6 +128,9 @@ def build_report(
                 "airborne_h": sum(f["duration_s"] for f in fl) / 3600.0,
                 "origin_unknown": sum(1 for f in fl if f["origin"] is None),
                 "destination_unknown": sum(1 for f in fl if f["destination"] is None),
+                "airborne_at_start": at_start,
+                "airborne_at_end": at_end,
+                "round_trips": sum(1 for f in fl if f["origin"] is not None and f["origin"] == f["destination"]),
             },
             "hours": hours,
             "peak_hour": peak,

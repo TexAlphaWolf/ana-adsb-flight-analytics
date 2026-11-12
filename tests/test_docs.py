@@ -16,6 +16,7 @@ from adsbstats.verify import compare
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORT = json.loads((ROOT / "docs" / "report.json").read_text(encoding="utf-8"))
+REAL = json.loads((ROOT / "docs" / "real.json").read_text(encoding="utf-8"))
 BENCH = json.loads((ROOT / "docs" / "bench.json").read_text(encoding="utf-8"))
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 ANALYSIS = (ROOT / "docs" / "analysis.md").read_text(encoding="utf-8")
@@ -46,7 +47,7 @@ def test_the_benchmark_is_what_the_text_says_it_is() -> None:
 
 
 def test_markdown_is_the_render_of_the_json(tmp_path: Path) -> None:
-    for name in ("report", "bench"):
+    for name in ("report", "bench", "real"):
         out = tmp_path / f"{name}.md"
         assert cli.main(["render", str(ROOT / "docs" / f"{name}.json"), "-o", str(out)]) == 0
         assert out.read_text(encoding="utf-8") == (ROOT / "docs" / f"{name}.md").read_text(encoding="utf-8")
@@ -64,7 +65,7 @@ def test_the_report_is_what_the_demo_gives_today() -> None:
 
 
 def test_figures_exist() -> None:
-    for name in ("report.png", "bench.png"):
+    for name in ("report.png", "bench.png", "real.png"):
         assert (ROOT / "docs" / name).stat().st_size > 10_000
 
 
@@ -184,6 +185,7 @@ def test_the_demo_claims() -> None:
     a = REPORT["analysis"]
     t = a["totals"]
     assert (t["aircraft"], t["flights"], t["origin_unknown"], t["destination_unknown"]) == (156, 331, 4, 4)
+    assert (t["airborne_at_start"], t["airborne_at_end"], t["round_trips"]) == (0, 0, 0)
     assert sum(a["altitude_share"]) == pytest.approx(1) and a["hours"][23] == 0
     assert (
         REPORT["accuracy"]["faults"]["no_start"]["injected"] == 4
@@ -206,3 +208,39 @@ def test_the_method_matches_the_code() -> None:
     )
     for kind in FAULT_KINDS:
         assert f"| `{kind}` |" in METHOD, kind
+
+
+def test_the_real_day_is_what_the_text_says() -> None:
+    a, rd = REAL["analysis"], REAL["read"]
+    t = a["totals"]
+    assert REAL["version"] == "1.1.0" and REAL["accuracy"] is None and rd["truncated"] is True
+    assert (rd["bad_points"], rd["bad_files"]) == (0, 0)
+    assert (t["aircraft"], t["points"], t["flights"]) == (53099, 72983747, 135278)
+    assert (t["airborne_at_start"], t["airborne_at_end"], t["round_trips"]) == (5057, 5147, 16842)
+    assert a["hours"][0] - t["airborne_at_start"] == 5412 and a["hours"][23] == 5321 and a["hours"][1] == 4664
+    reports_a_second = t["points"] / REAL["elapsed_s"]
+    synthetic = BENCH["read_dir"]["points"] / (BENCH["read_dir"]["seconds"] + ROWS[0]["seconds"])
+    must = [
+        f"{t['aircraft']:,} aircraft and {t['points']:,} position reports became {t['flights']:,} flights",
+        f"{t['distance_km']:,.0f} km flown in {t['airborne_h']:,.1f} hours",
+        f"It took {REAL['elapsed_s']:.0f} s, {reports_a_second:,.0f} reports a second",
+        f"about {100 * (1 - reports_a_second / synthetic):.0f}% below the {synthetic:,.0f} a second",
+        f"{100 * t['origin_unknown'] / t['flights']:.1f}% of the flights have no origin and {100 * t['destination_unknown'] / t['flights']:.1f}% no destination",
+        f"({t['origin_unknown']:,} and {t['destination_unknown']:,} of {t['flights']:,})",
+        f"{t['airborne_at_start']:,} flights are already in the air when the day begins",
+        f"without them hour 00 has {a['hours'][0] - t['airborne_at_start']:,} take-offs, in line with {a['hours'][23]:,} at 23:00",
+        f"{t['airborne_at_end']:,} flights still in the air",
+        f"{t['round_trips']:,} flights ({100 * t['round_trips'] / t['flights']:.1f}%) start and end at the same airport",
+        f"{t['glitches']} removed in {t['points']:,} reports ({1e6 * t['glitches'] / t['points']:.1f} per million)",
+        f"{a['types'][0]['flights']:,} flights",
+        f"{a['above_fl240'] * 100:.1f}% of the airborne time is above 24,000 ft",
+    ]
+    text = flat(README)
+    for m in must:
+        assert flat(m) in text, m
+    assert f"{REAL['elapsed_s']:.0f} s ({reports_a_second:,.0f} reports a second)" in flat(ANALYSIS)
+    ap = a["airports"]
+    assert [x["ident"] for x in ap[:3]] == ["KORD", "KATL", "KDFW"] and ap[0]["movements"] == 1878
+    assert a["routes"][0] == {"origin": "KDAB", "destination": "KDAB", "flights": 267}
+    assert round(a["duration_min"]["max"]) == 1440 and round(a["distance_km"]["max"]) == 7192
+    assert "took 9 minutes" in flat(README) and round(REAL["elapsed_s"] / 60) == 9
